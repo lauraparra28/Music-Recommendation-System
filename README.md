@@ -50,4 +50,46 @@ MATCH (g)<-[:IN_GENRE]-(t:Track)
 RETURN DISTINCT t.title AS track, g.name AS genre;
 ```
 
+### 🎧 1. Recomendações de Tracks (músicas)
+
+✅ 1.1 Tracks do mesmo artista que o usuário já ouviu
+
+```cypher
+MATCH (u:User {name: "Laura"})-[:LISTENED]->(:Track)-[:BY_ARTIST]->(a:Artist)
+MATCH (a)-[:BY_ARTIST]-(t2:Track)
+WHERE NOT (u)-[:LISTENED]->(t2)
+RETURN DISTINCT t2 AS recommendedTrack, a.name AS artist
+LIMIT 10;
+```
+
+✅ 1.2 Tracks do mesmo gênero que o usuário já ouviu
+
+```cypher
+MATCH (u:User {name: "Andres"})-[:LISTENED]->(t:Track)-[:IN_GENRE]->(g:Genre)
+MATCH (g)<-[:IN_GENRE]-(t2:Track)
+WHERE NOT (u)-[:LISTENED]->(t2)
+RETURN DISTINCT t2 AS recommendedTrack, g.name AS genre
+LIMIT 10;
+```
+
+### 🎤 2. Recomendações de Artistas
+
+✅ 2.1 Artistas do mesmo gênero dos artistas já seguidos
+
+```cypher
+MATCH (u:User {name: "Diego"})-[:FOLLOWS]->(a:Artist)-[:IN_GENRE]->(g:Genre)
+MATCH (g)<-[:IN_GENRE]-(a2:Artist)
+WHERE NOT (u)-[:FOLLOWS]->(a2)
+RETURN DISTINCT a2 AS recommendedArtist, g.name AS genre
+LIMIT 10;
+```
+
+✅ 2.2 Artistas que produziram tracks que o usuário escuta muito
+
+```cypher
+MATCH (u:User {id:"u1"})-[:LISTENED]->(t:Track)-[:IN_GENRE]->(g:Genre)
+RETURN g AS recommendedGenre, COUNT(*) AS score
+ORDER BY score DESC;
+
+```
 
