@@ -87,7 +87,7 @@ LIMIT 10;
 ✅ 2.2 Artistas que produziram tracks que o usuário escuta muito
 
 ```cypher
-MATCH (u:User {id:"u1"})-[:LISTENED]->(t:Track)-[:IN_GENRE]->(g:Genre)
+MATCH (u:User {name: "Andres"})-[:LISTENED]->(t:Track)-[:IN_GENRE]->(g:Genre)
 RETURN g AS recommendedGenre, COUNT(*) AS score
 ORDER BY score DESC;
 
@@ -98,7 +98,7 @@ ORDER BY score DESC;
 ✅ 3.1 Gêneros mais consumidos pelo usuário.
 
 ```cypher
-M<ATCH (u:User {id:"u1"})-[:LISTENED]->(t:Track)-[:IN_GENRE]->(g:Genre)
+M<ATCH (u:User {name: "Carol"})-[:LISTENED]->(t:Track)-[:IN_GENRE]->(g:Genre)
 RETURN g AS recommendedGenre, COUNT(*) AS score
 ORDER BY score DESC;
 ```
@@ -122,7 +122,7 @@ CALL gds.graph.project(
 
 ```
 
-###🎧 2. Similaridade entre Usuários (User → User)
+### 🎧 2. Similaridade entre Usuários (User → User)
 
 Usando Node Similarity (Jaccard) baseado no que ouviram.
 
