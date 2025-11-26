@@ -93,3 +93,48 @@ ORDER BY score DESC;
 
 ```
 
+### 3. Recomendações de Gêneros
+
+✅ 3.1 Gêneros mais consumidos pelo usuário.
+
+```cypher
+M<ATCH (u:User {id:"u1"})-[:LISTENED]->(t:Track)-[:IN_GENRE]->(g:Genre)
+RETURN g AS recommendedGenre, COUNT(*) AS score
+ORDER BY score DESC;
+```
+
+## 🚀 1. Criar a Projeção do Grafo (GDS Projection)
+
+Incluí USERS, TRACKS, ARTISTS, GENRES e suas relações.
+
+```cypher
+CALL gds.graph.project(
+  'musicGraph',
+  ['User', 'Track', 'Artist', 'Genre'],
+  {
+    LISTENED: { orientation: 'UNDIRECTED', properties: 'times' },
+    LIKED: { orientation: 'UNDIRECTED' },
+    BY_ARTIST: { orientation: 'UNDIRECTED' },
+    IN_GENRE: { orientation: 'UNDIRECTED' },
+    FOLLOWS: { orientation: 'UNDIRECTED' }
+  }
+);
+
+```
+
+###🎧 2. Similaridade entre Usuários (User → User)
+
+Usando Node Similarity (Jaccard) baseado no que ouviram.
+
+```cypher
+CALL gds.nodeSimilarity.write(
+  'musicGraph',
+  {
+    nodeLabels: ['User'],
+    relationshipTypes: ['LISTENED'],
+    writeRelationshipType: 'SIMILAR_USER',
+    writeProperty: 'score'
+  }
+);
+```
+
